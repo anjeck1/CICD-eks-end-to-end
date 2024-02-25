@@ -1,0 +1,87 @@
+#Setup an AWS EC2 Instance
+#The first step would be for us to set up an EC2 instance and on this instance.
+we will be installing
+EC2 from Aws Ubuntu VM
+
+# We will Install JDK on AWS EC2 Instance
+#Update the EC2 VM and installing JDK
+
+   INSTALL JAVA#
+sudo apt-get update
+java -version
+sudo apt install openjdk-11-jre-headless
+openjdk version
+
+     JENKINS
+#Install and Setup Jenkins
+wget -q -O - https://pkg.jenkins.io/debian-stable/jenkins.io.key | sudo apt-key add -
+sudo sh -c 'echo deb https://pkg.jenkins.io/debian-stable binary/ > /etc/apt/sources.list.d/jenkins.list'
+sudo apt-get update
+sudo apt-get install jenkins
+systemctl start jenkins
+systemctl enable jenkins
+systemctl status jenkins
+
+# get the ip address of the EC2 VM  (PUBLIC IP address) and opend security group 22 and 8080 which is the default port numer for jenkins
+localhost:8080
+# using the cat command UNLOCK JENKINS see the administrator password
+ cat /var/lib/jenkins/secrets/initialAdminPassword
+#After that, jenkins will propt you for installing the plugins (install suggested plugins)
+Set up the username, password, and other configurations
+
+# Setup Gradle if you are using springboot application  and Maven for other applicationsuch as nodjs as you building tools
+ Manage Jenkins--global                                                                                                                                                     
+
+# Update visudo and assign administration privileges to jenkins user
+sudo vi /etc/sudoers
+jenkins ALL=(ALL) NOPASSWD: ALL
+usdo su - jenkins
+
+
+        Docker
+install docker using the command
+apt install docker-ce  or  install docker*
+docjer --verion
+sudo usermod aG docker jenkins
+#add jenkins user to docker group. as junkins will be accessing the docker for buildind the docker images so we need to add the jenkins user to the docker group
+#reboot the jenkins server ie the EC2 VM
+sudo su - jenkins     #this is because we are running under jenkins user 
+
+                   Install and setup AWSCLI
+# Install the AWSCLI on thesame EC2 VM as the jenkins server. Please check the AWS documentation 
+sudo apt install awscli
+aws --version
+
+
+# configure AWSCLI using the commands to setup the access key and secret access key
+aws configure
+aws access key {ID }
+AWS secret access key {ID}
+Default region { }
+Default output format { }
+
+
+      Install and setup Kubectl
+
+curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
+chmod +x ./kubectl
+sudo mv ./kubectl /usr/local/bin
+mkdir -p $HOME/bin && cp ./kubectl $HOME/bin/kubectl && export PATH=$HOME/bin:$PATH
+kubectl version
+
+
+                 Install and setup Eksctl
+curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
+sudo mv /tmp/eksctl /usr/local/bin
+eksctl version
+
+
+                Create EKS Cluster using eksctl command
+eksctl create cluster --name <your eks cluster name> --version 1.27 --region us west-1 --nodegroup-name worker-nodes --node-type t2.micro --nodes 2
+kubectl get pods
+kubectl get nodes
+
+
+                    Add Docker and GitHub Credentials into Jenkins sever
+Goto -> Jenkins -> Manage Jenkins -> Manage Credentials -> Stored scoped to jenkins -> global -> Add Credentials
+

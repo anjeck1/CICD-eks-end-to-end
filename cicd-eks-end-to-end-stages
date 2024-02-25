@@ -1,0 +1,31 @@
+
+
+ Here is how you write the various JENKINS STAGES TO BE USED BY JENKINS SERVER
+
+ #Jenkins stage-1 : Checkout the GitHub Repository
+      stage("Git Clone"){
+
+        git credentialsId: 'GIT_HUB_CREDENTIALS', url: 'https://github.com/anjeck1/cicd-project-1'
+    }
+
+
+ #Jenkins stage-2 : Gradle compilation and build
+      stage('Gradle Build') {
+          sh './gradlew build'
+      }
+
+  stage("Docker build"){
+    sh 'docker version'
+    sh 'docker build -t <file name> .'
+    sh 'docker image list'
+    sh 'docker tag <file name> <repository name>/<file name>:<tage'
+   } 
+
+  stage("Push Image to Docker Hub"){
+        sh 'docker push  <repository name>/<file name>:<tage'
+   } 
+
+  stage("kubernetes deployment"){
+    sh 'kubectl apply -f k8s-spring-boot-deployment.yml'
+   } 
+
